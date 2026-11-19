@@ -1,9 +1,14 @@
 flowchart LR
-    C[experiment.json: факторы, seeds, размеры] --> O[Оркестратор make experiment]
-    O --> W[web: HTTP и фиксированный каталог]
-    O --> R[runner: Chromium и Playwright]
-    R -->|UI клики| W
-    W -->|события и состояние до выбора| R
-    R --> T[raw JSONL и manifests JSON]
-    T --> A[Python анализ парных прогонов]
-    A --> P[CSV, summary JSON и графики]
+    C[experiment.json и prompt] --> R[Python runner и seeded histories]
+    R -->|18 DOM inspections| B[Chromium и Playwright]
+    B --> W[Каталог: 6 объектов и 9 полей]
+    B --> H[Хронологическая история]
+    H --> L[LLM inference через OpenRouter]
+    L --> V[Проверка JSON: 3 поля и вид]
+    V --> S[Единый renderer static или llm]
+    S --> B
+    R --> D[Raw JSON и manifests]
+    L --> D
+    B --> D
+    D --> A[Парный анализ Python]
+    A --> O[CSV, summary JSON и графики]

@@ -1,0 +1,9 @@
+flowchart LR
+    C[experiment.json: факторы, seeds, размеры] --> O[Оркестратор make experiment]
+    O --> W[web: HTTP и фиксированный каталог]
+    O --> R[runner: Chromium и Playwright]
+    R -->|UI клики| W
+    W -->|события и состояние до выбора| R
+    R --> T[raw JSONL и manifests JSON]
+    T --> A[Python анализ парных прогонов]
+    A --> P[CSV, summary JSON и графики]

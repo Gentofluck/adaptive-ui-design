@@ -1,0 +1,43 @@
+{
+  "strategies": [
+    "static",
+    "frequency",
+    "recency"
+  ],
+  "scenarios": [
+    "stable",
+    "drift",
+    "uniform"
+  ],
+  "repetitions": 10,
+  "batches": 2,
+  "seed": 4210,
+  "warmup": 5,
+  "train": 20,
+  "tasks": 24,
+  "operations": 40,
+  "shortcuts": 5,
+  "page_size": 8,
+  "bootstrap": 5000,
+  "practical_clicks": 0.25,
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "aa_pairs": 5,
+  "hot_operations": [
+    24,
+    25,
+    26,
+    27,
+    28
+  ],
+  "drift_operations": [
+    32,
+    33,
+    34,
+    35,
+    36
+  ],
+  "hot_probability": 0.85
+}

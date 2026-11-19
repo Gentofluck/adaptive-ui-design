@@ -1,14 +1,13 @@
 flowchart LR
-    C[experiment.json и prompt] --> R[Python runner и seeded histories]
-    R -->|18 DOM inspections| B[Chromium и Playwright]
-    B --> W[Каталог: 6 объектов и 9 полей]
-    B --> H[Хронологическая история]
-    H --> L[LLM inference через OpenRouter]
-    L --> V[Проверка JSON: 3 поля и вид]
-    V --> S[Единый renderer static или llm]
-    S --> B
-    R --> D[Raw JSON и manifests]
-    L --> D
-    B --> D
-    D --> A[Парный анализ Python]
-    A --> O[CSV, summary JSON и графики]
+    S[Существующий сайт] --> B[Страница в браузере]
+    J[Внешний adapt.js и настройки сайта] --> B
+    B -->|События взаимодействия с блоками| N[API адаптации на Node.js]
+    M[ONNX-модель и описания блоков] --> N
+    N -->|Порядок и раскрытие блоков| B
+    G[Планы задач и seed] --> P[Playwright]
+    P --> B
+    B --> L[Журналы событий]
+    N --> L
+    P --> L
+    L --> A[Статистический анализ]
+    A --> R[Таблицы и графики]

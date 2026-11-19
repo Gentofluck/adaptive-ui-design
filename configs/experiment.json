@@ -1,22 +1,161 @@
 {
-  "model": "nvidia/nemotron-3.5-lightning:free",
+  "schema_version": 3,
+  "stage": "experiment_design",
   "strategies": [
     "static",
-    "llm"
+    "recency",
+    "semantic"
   ],
   "scenarios": [
-    "focused",
-    "shift"
+    "stable",
+    "shift",
+    "related",
+    "uniform"
   ],
   "repetitions": 10,
   "seed": 4210,
-  "events": 18,
+  "warmup": 5,
+  "history_tasks": 18,
+  "measured_tasks": {
+    "stable": 24,
+    "shift": 24,
+    "related": 1,
+    "uniform": 24
+  },
+  "shift_after_task": 12,
+  "components": [
+    "layout",
+    "specifications",
+    "purchase_options",
+    "mortgage",
+    "complex_features",
+    "apartment_features",
+    "similar_apartments"
+  ],
+  "expanded_components": 3,
+  "history_half_life_events": 6,
+  "history_event_weights": {
+    "open": 1,
+    "expand": 1,
+    "save": 2
+  },
+  "focused_probability": 0.8,
   "bootstrap": 5000,
-  "practical_coverage": 0.2,
+  "practical_actions": 0.5,
+  "aa_pairs": 5,
+  "related_groups": [
+    [
+      "apartment_features",
+      "layout",
+      "specifications"
+    ],
+    [
+      "purchase_options",
+      "mortgage",
+      "similar_apartments"
+    ],
+    [
+      "complex_features",
+      "apartment_features",
+      "specifications"
+    ]
+  ],
+  "embedding": {
+    "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+    "device": "cpu",
+    "normalize": true,
+    "max_seq_length": 128,
+    "runtime": "transformers.js",
+    "library_version": "3.8.1",
+    "format": "onnx",
+    "file": "onnx/model.onnx",
+    "dtype": "fp32",
+    "pooling": "mean"
+  },
   "viewport": {
     "width": 1280,
     "height": 900
   },
-  "aa_pairs": 5,
-  "max_api_requests": 20
+  "threads": 1,
+  "measured_components_per_task": 2,
+  "comparisons": [
+    {
+      "reference": "static",
+      "candidate": "recency"
+    },
+    {
+      "reference": "static",
+      "candidate": "semantic"
+    },
+    {
+      "reference": "recency",
+      "candidate": "semantic"
+    }
+  ],
+  "primary_metric": "navigation_clicks",
+  "click_calibration": {
+    "expanded": 0,
+    "collapsed": 1,
+    "two_collapsed": 2
+  },
+  "component_descriptions": {
+    "layout": "Планировка квартиры и её расположение на этаже.",
+    "specifications": "Характеристики квартиры: площадь, этаж, адрес, вид из окна и срок сдачи.",
+    "purchase_options": "Способы покупки: полная оплата, ипотека, трейд-ин и доступные скидки.",
+    "mortgage": "Ипотечный калькулятор: первоначальный взнос, срок кредита, ежемесячный платёж и предложения банков.",
+    "complex_features": "Преимущества жилого комплекса: двор, парк, детские сады, парковка и общие пространства.",
+    "apartment_features": "Преимущества квартиры: балкон, отделка и высота потолков.",
+    "similar_apartments": "Похожие квартиры: планировки, площадь, этаж, стоимость и ежемесячный платёж."
+  },
+  "runtime": {
+    "target": {
+      "kind": "fixed_copy_of_rendered_page",
+      "image": "nginx:1.28.0-alpine",
+      "cpus": 0.5,
+      "memory_mib": 128
+    },
+    "api": {
+      "node": "24.11.0",
+      "image": "node:24.11.0-bookworm-slim",
+      "digest": "sha256:76d0ed0ed93bed4f4376211e9d8fddac4d8b3fbdb54cc45955696001a3c91152",
+      "server": "node:http",
+      "transformers_js": "3.8.1",
+      "cpus": 1,
+      "memory_mib": 2048
+    },
+    "runner": {
+      "python": "3.12.3",
+      "image": "mcr.microsoft.com/playwright/python:v1.56.0-noble",
+      "digest": "sha256:a7f6cf3ae520c9d670ad956572c13747ed5abdbba5123a01526f873ed1662528",
+      "playwright": "1.56.0",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3",
+      "matplotlib": "3.10.3",
+      "cpus": 1,
+      "memory_mib": 1024,
+      "shm_mib": 512
+    }
+  },
+  "integration": {
+    "type": "external_script",
+    "client": "adapt.js",
+    "backend": "node_api",
+    "site_adapter_required": true,
+    "block_ids": [
+      "layout",
+      "specifications",
+      "purchase_options",
+      "mortgage",
+      "complex_features",
+      "apartment_features",
+      "similar_apartments"
+    ],
+    "baseline": "same_script_fixed_initial_layout",
+    "apply_changes": "before_task",
+    "on_api_error": "keep_current_layout",
+    "preserve_dom_nodes": true,
+    "session_scope": "run",
+    "reset_before_run": true
+  }
 }

@@ -1,28 +1,25 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "stage": "experiment_design",
   "strategies": [
     "static",
-    "recency",
     "semantic"
   ],
   "scenarios": [
     "stable",
-    "shift",
-    "related",
-    "uniform"
+    "shift"
   ],
   "repetitions": 10,
   "seed": 4210,
   "warmup": 5,
-  "history_tasks": 18,
-  "measured_tasks": {
-    "stable": 24,
-    "shift": 24,
-    "related": 1,
-    "uniform": 24
-  },
+  "history_size": 10,
+  "initial_history_events": 10,
+  "measured_tasks": 24,
   "shift_after_task": 12,
+  "focused_probability": 0.8,
+  "bootstrap": 5000,
+  "practical_viewports": 0.5,
+  "aa_pairs": 5,
   "components": [
     "layout",
     "specifications",
@@ -32,34 +29,15 @@
     "apartment_features",
     "similar_apartments"
   ],
-  "expanded_components": 3,
-  "history_half_life_events": 6,
-  "history_event_weights": {
-    "open": 1,
-    "expand": 1,
-    "save": 2
+  "component_descriptions": {
+    "layout": "Планировка квартиры и её расположение на этаже.",
+    "specifications": "Характеристики квартиры: площадь, этаж, адрес, вид из окна и срок сдачи.",
+    "purchase_options": "Способы покупки: полная оплата, ипотека, трейд-ин и доступные скидки.",
+    "mortgage": "Ипотечный калькулятор: первоначальный взнос, срок кредита, ежемесячный платёж и предложения банков.",
+    "complex_features": "Преимущества жилого комплекса: двор, парк, детские сады, парковка и общие пространства.",
+    "apartment_features": "Преимущества квартиры: балкон, отделка и высота потолков.",
+    "similar_apartments": "Похожие квартиры: планировки, площадь, этаж, стоимость и ежемесячный платёж."
   },
-  "focused_probability": 0.8,
-  "bootstrap": 5000,
-  "practical_actions": 0.5,
-  "aa_pairs": 5,
-  "related_groups": [
-    [
-      "apartment_features",
-      "layout",
-      "specifications"
-    ],
-    [
-      "purchase_options",
-      "mortgage",
-      "similar_apartments"
-    ],
-    [
-      "complex_features",
-      "apartment_features",
-      "specifications"
-    ]
-  ],
   "embedding": {
     "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
@@ -78,42 +56,33 @@
     "height": 900
   },
   "threads": 1,
-  "measured_components_per_task": 2,
+  "required_components_per_task": 2,
   "comparisons": [
     {
       "reference": "static",
-      "candidate": "recency"
-    },
-    {
-      "reference": "static",
-      "candidate": "semantic"
-    },
-    {
-      "reference": "recency",
       "candidate": "semantic"
     }
   ],
-  "primary_metric": "navigation_clicks",
-  "click_calibration": {
-    "expanded": 0,
-    "collapsed": 1,
-    "two_collapsed": 2
+  "primary_metric": "scroll_distance_viewports",
+  "scroll_measurement": {
+    "task_start": "top",
+    "target_order": "from_task_plan",
+    "alignment": "block_top_clamped_to_page",
+    "distance": "sum_absolute_actual_scroll_offsets",
+    "unit": "viewport_height"
   },
-  "component_descriptions": {
-    "layout": "Планировка квартиры и её расположение на этаже.",
-    "specifications": "Характеристики квартиры: площадь, этаж, адрес, вид из окна и срок сдачи.",
-    "purchase_options": "Способы покупки: полная оплата, ипотека, трейд-ин и доступные скидки.",
-    "mortgage": "Ипотечный калькулятор: первоначальный взнос, срок кредита, ежемесячный платёж и предложения банков.",
-    "complex_features": "Преимущества жилого комплекса: двор, парк, детские сады, парковка и общие пространства.",
-    "apartment_features": "Преимущества квартиры: балкон, отделка и высота потолков.",
-    "similar_apartments": "Похожие квартиры: планировки, площадь, этаж, стоимость и ежемесячный платёж."
+  "client_observation": {
+    "event": "block_view",
+    "focus": "viewport_center_inside_block",
+    "minimum_ms": 1000
   },
   "runtime": {
     "target": {
       "kind": "fixed_copy_of_rendered_page",
       "image": "nginx:1.28.0-alpine",
       "cpus": 0.5,
-      "memory_mib": 128
+      "memory_mib": 128,
+      "digest": "sha256:30f1c0d78e0ad60901648be663a710bdadf19e4c10ac6782c235200619158284"
     },
     "api": {
       "node": "24.11.0",
@@ -151,11 +120,20 @@
       "apartment_features",
       "similar_apartments"
     ],
-    "baseline": "same_script_fixed_initial_layout",
+    "baseline": "original_block_order",
     "apply_changes": "before_task",
     "on_api_error": "keep_current_layout",
     "preserve_dom_nodes": true,
     "session_scope": "run",
-    "reset_before_run": true
-  }
+    "reset_before_run": true,
+    "allowed_changes": [
+      "order"
+    ],
+    "preserve_expansion_state": true
+  },
+  "task_validation": {
+    "expected_values": "fixed_page_fixture",
+    "success": "both_target_actions_and_expected_answers_match"
+  },
+  "background_targets": "uniform_pair_without_replacement_from_other_five"
 }
